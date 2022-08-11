@@ -10,7 +10,7 @@ sudo apt install bison
 sudo apt-get install libglib2.0-dev
 ```
 
-## Running
+## Run
 
 ```bash
 flex -o lexique_projet.c lexique_projet.l
@@ -18,7 +18,7 @@ bison -d syntaxe_projet.y
 gcc lexique_projet.c syntaxe_projet.tab.c `pkg-config --cflags --libs glib-2.0` -o projet
 ```
 
-## Cleaning
+## Clean
 
 ```bash
 rm -rf lexique_projet.c syntaxe_projet.tab.c  syntaxe_projet.tab.h
