@@ -1,0 +1,33 @@
+prog first;
+
+var varGlobal1, varGlobale2 : int;
+var varGlobale3 : int;
+func max(param1 : int; var param2 : int):int;
+{
+if param1 > param2 then
+max = param1
+else max = param2
+};
+
+proc myprocedure(var entier : int);
+var myvalue : int;
+{
+};
+
+/*
+Ceci est un commentaire 
+des symboles inconnus : @@ ## !?
+*/
+{
+varGlobal1= 10;
+varGlobale2 = 20;
+varGlobale3 = max(myvariable1,myvariable2);
+/*varGlobale3 = max2(myvariable1,myvariable2);*/
+myprocedure(mymaxvariable);
+/*myprocedure2(mymaxvariable);*/
+varGlobale3 = 10;
+varGlobal1 = (myvariable1 < myvariable2) or (myvariable1 == varGlobal1);
+varGlobale2 = ( 20 + 2 ) * 9 + 4 * myvariable1;
+varGlobale3 = varGlobale2 - varGlobal1
+}
+

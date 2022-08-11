@@ -1,0 +1,56 @@
+%{
+#include <stdio.h>
+/* liaison avec l'analyseur lexical */
+extern int yylineno; /* le numéro de la ligne courante */
+extern char* yytext; /* le dernier lexème reconnu */
+extern int yylex (void); /* la fonction d'analyse lexicale */
+extern FILE *yyin;
+/* éventuellement d'autres instructions en C (#include, déclaration de fonctions ...)*/
+%}
+// Symbols.
+
+%union{
+int entier;
+double reel;
+char* chaine;
+};
+/* liste des lexèmes */
+%token NOMBRE
+%token T_ar NewAr T_boo Def Dep Dem Af true false Sk POINT_VIRGULE SI ALORS SINON Var Wh Do RETOUR ECRIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+ACCOLADE_OUVRANTE ACCOLADE_FERMANTE ENTIER LIRE
+%token Eq INFERIEUR INFERIEUR_EGAL
+%token Not And Or Pl Mo Mu
+
+%start ExpressionArith /* nom de l'axiome */
+%%
+
+/* définition de la grammaire */
+
+
+ExpressionArith : Terme ExpressionArithBis {printf("ExpressionArith \n"); }
+ExpressionArithBis : Pl ExpressionArith |
+Terme : Facteur TermeBis
+TermeBis : Mul Terme |
+Facteur : PARENTHESE_OUVRANTE ExpressionArith PARENTHESE_FERMANTE |  NOMBRE |  PARENTHESE_OUVRANTE error PARENTHESE_FERMANTE
+/*
+ExpressionArith : ExpressionArith PLUS ExpressionArith | ExpressionArith MULTIPLICATION ExpressionArith | PARENTHESE_OUVRANTE ExpressionArith PARENTHESE_FERMANTE | NOMBRE
+*/
+/* autres règles de la grammaire */
+
+%%
+
+int yyerror (char *s) {
+/* la chaîne s contient "parse error" par défaut */
+   fprintf(stderr, "%s on '%s' line %d\n", s, yytext, yylineno);
+   return 1;
+}
+
+
+int main (int argc, char *argv[]) {
+	yyin = fopen (argv[1], "r");
+	if (!yyparse())
+	fprintf(stdout, "chaine reconnue\n");
+	else
+	fprintf(stderr, "pb syntaxique\n");
+	return 0;
+}

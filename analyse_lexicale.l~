@@ -1,0 +1,36 @@
+%{
+#include "analyse_syntaxique.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+int yylex(void);
+void yyerror(char*);
+unsigned int lineno=1;
+bool error_lexical=false;
+%}
+
+%option noyywrap
+
+
+PARENTHESE_OUVRANTE   "("
+PARENTHESE_FERMANTE   ")"
+PLUS                  "+"
+MULTIPLICATION        "*"
+blanks          [ \t\n]+
+identifier		[_a-zA-Z0-9]+
+NOMBRE			  [0-9]+
+
+%%
+{PARENTHESE_OUVRANTE}     {return(PARENTHESE_OUVRANTE);}
+{PARENTHESE_FERMANTE}     {return(PARENTHESE_FERMANTE);}
+{PLUS}     {return(PLUS);}
+{MULTIPLICATION}     {return(MULTIPLICATION);}
+{NOMBRE}     {return(NOMBRE);}
+{blanks}        { /* ignore */ }
+
+. {
+        fprintf(stderr,"\tERREUR : Lexeme inconnu a la ligne %d. Il s'agit de %s et comporte %d lettre(s)\n",lineno,yytext,yyleng);
+        error_lexical=true;
+        return yytext[0];
+}
+%%

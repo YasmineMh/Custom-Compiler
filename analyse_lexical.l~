@@ -1,0 +1,98 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#include "ppascal.tab.h"
+#include "analyse_syntaxique.h"
+
+int line = 0;
+%}
+
+
+%option noinput nounput
+%s NFON NPRO NMAIN
+%x comment
+
+/*Les symboles*/
+PARENTHESE_OUVRANTE   "("
+PARENTHESE_FERMANTE   ")"
+ACCOLADE_OUVRANTE     "{"
+ACCOLADE_FERMANTE     "}"
+INFERIEUR             "<"
+INFERIEUR_EGAL        "<="
+Eq         "="
+VIRGULE	     ","
+POINT_VIRGULE   ";"
+Pl  "+"
+Mo  "-"
+Mul "*"
+Af ":="
+/*Fin symboles*/
+
+/*Les mots clef*/
+ENTIER   "entier"
+SI       "si"
+SINON    "sinon"
+ALORS    "alors"
+RETOUR   "retour"
+LIRE     "lire"
+ECRIRE   "ecrire"
+MAIN     "main"
+/*Fin Mot clefs*/
+
+/*Les éxpressions régulière*/
+alpha [A-Za-z]
+digit [0-9]
+und [_]
+/*Fin éxpression r*/
+
+%%
+
+{PARENTHESE_OUVRANTE}     {return PARENTHESE_OUVRANTE;}
+{PARENTHESE_FERMANTE}     {return PARENTHESE_FERMANTE;}
+{ACCOLADE_OUVRANTE}       {return ACCOLADE_OUVRANTE;}
+{ACCOLADE_FERMANTE}	      {return ACCOLADE_FERMANTE;}
+
+{digit}+            {yylval.i = atoi(yytext);return NOMBRE;}
+boolean           {return T_boo;}
+{ENTIER}          {return ENTIER;}
+{RETOUR}          {return RETOUR;}
+{LIRE}	          {return LIRE;}
+{ECRIRE}          {return ECRIRE;}
+{Af}                {return Af;}
+true              {return true;}
+false             {return false;}
+{POINT_VIRGULE}   {return POINT_VIRGULE;}
+{SI}                {return SI;}
+{ALORS}              {return ALORS;}
+{SINON}              {return SINON;}
+var               {return Var;}
+while             {return Wh;}
+do                {return Do;}
+skip			  {return Sk;}
+retour            {return RETOUR;}
+ecrire            {return ECRIRE;}
+{Pl}               {return Pl;}
+{Mo}               {return Mo;}
+{Mul}               {return Mu;}
+and               {return And;}
+or                {return Or;}
+not               {return Not;}
+{INFERIEUR_EGAL}  {return INFERIEUR_EGAL;}
+{INFERIEUR}       {return INFERIEUR;}
+{Eq}               {return Eq;}
+"array of"        {return T_ar;}
+"new array of"    {return NewAr;}
+"/*"			  {BEGIN comment;}
+
+<comment>[^*\n]*        /* eat anything that's not a '*' */
+<comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<comment>\n             ++line;
+<comment>"*/"        BEGIN(INITIAL);
+\$[a-zA-Z0-9_\$]+      {yylval.id = strdup(yytext);return ID_VARIABLE;}
+[ \t]           {;} //Ignore
+[\n]			{line++;}
+{MAIN} {yylval.id = strdup(yytext); return NMain;}
+{alpha}({alpha}|{digit})* {yylval.id=strdup(yytext); return ID_FONCTION;}
+.       {return yytext[0];}
+
+%%
